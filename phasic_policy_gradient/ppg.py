@@ -1,14 +1,16 @@
-from copy import deepcopy
-from . import ppo
-from . import logger
-import torch as th
 import itertools
-from . import torch_util as tu
-from torch import distributions as td
-from .distr_builder import distr_builder
-from mpi4py import MPI
-from .tree_util import tree_map, tree_reduce
 import operator
+
+import torch as th
+from mpi4py import MPI
+from torch import distributions as td
+
+from . import logger
+from . import ppo
+from . import torch_util as tu
+from .distr_builder import distr_builder
+from .tree_util import tree_map, tree_reduce
+
 
 def sum_nonbatch(logprob_tree):
     """
@@ -45,6 +47,7 @@ class PpoModel(th.nn.Module):
             state_in=state_in,
         )
         return vpred[:, 0]
+
 
 class PhasicModel(PpoModel):
     def forward(self, ob, first, state_in) -> "pd, vpred, aux, state_out":
@@ -160,6 +163,7 @@ class PhasicValueModel(PhasicModel):
     def aux_keys(self):
         return ["vtarg"]
 
+
 def make_minibatches(segs, mbsize):
     """
     Yield one epoch of minibatch over the dataset described by segs
@@ -248,7 +252,7 @@ def learn(
             model=model,
             learn_state=ppo_state,
             callbacks=[
-                lambda _l: n_pi > 0 and _l["curr_iteration"] >= n_pi,
+                lambda _l: 0 < n_pi <= _l["curr_iteration"],
             ],
             interacts_total=interacts_total,
             store_segs=store_segs,

@@ -1,7 +1,9 @@
 import torch as th
+
 from . import logger
-from .tree_util import tree_map
 from . import torch_util as tu
+from .tree_util import tree_map
+
 
 def _fmt_row(width, row, header=False):
     out = " | ".join(_fmt_item(x, width) for x in row)
@@ -38,6 +40,7 @@ class LossDictPrinter:
             logger.log(_fmt_row(12, d.keys()))
             self.printed_header = True
         logger.log(_fmt_row(12, d.values()))
+
 
 def minibatch_optimize(
     train_fn: "function (dict) -> dict called on each minibatch that returns training stats",

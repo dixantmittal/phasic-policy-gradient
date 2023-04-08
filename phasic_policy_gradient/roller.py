@@ -7,6 +7,7 @@ from . import torch_util as tu
 from .tree_util import tree_map
 from .vec_monitor2 import VecMonitor2
 
+
 class Roller:
     def __init__(
         self,
@@ -20,7 +21,7 @@ class Roller:
         keep_cost: "keep per step costs and add to segment" = False,
     ):
         """
-            All outputs from public methods are torch arrays on default device
+        All outputs from public methods are torch arrays on default device
         """
         self._act_fn = act_fn
         if not isinstance(venv, VecMonitor2):
@@ -103,7 +104,7 @@ class Roller:
         """
         out = defaultdict(list)
         for d in single_steps:
-            for (k, v) in d.items():
+            for k, v in d.items():
                 out[k].append(v)
 
         # TODO stack
@@ -170,7 +171,7 @@ class Roller:
         self._state = newstate
         out.update(lastrew=lastrew, ob=ob, first=first, ac=ac)
         self._venv.act(tree_map(tu.th2np, ac))
-        for (k, v) in other_outs.items():
+        for k, v in other_outs.items():
             out[k] = v
         self._step_count += 1
         return out

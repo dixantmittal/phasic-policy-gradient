@@ -1,15 +1,15 @@
 import time
 from collections import deque, namedtuple
 
-import numpy as np
 import gym3
+import numpy as np
 
 Episode = namedtuple("Episode", ["ret", "len", "time", "info"])
 
 
 class PostActProcessing(gym3.Wrapper):
     """
-    Call process() after each action, except possibly possibly the last 
+    Call process() after each action, except possibly possibly the last
     one which you never called observe for.
     """
 

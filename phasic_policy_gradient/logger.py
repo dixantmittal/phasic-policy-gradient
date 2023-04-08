@@ -1,15 +1,16 @@
-import os
-import sys
-import shutil
-import os.path as osp
-import json
-import time
 import datetime
+import json
+import os
+import os.path as osp
+import shutil
+import sys
 import tempfile
+import time
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from contextlib import contextmanager
 from functools import partial, wraps
+
 from mpi4py import MPI
 
 
@@ -28,7 +29,7 @@ def mpi_weighted_mean(comm, local_name2valcount):
         name2sum = defaultdict(float)
         name2count = defaultdict(float)
         for n2vc in all_name2valcount:
-            for (name, (val, count)) in n2vc.items():
+            for name, (val, count) in n2vc.items():
                 name2sum[name] += val * count
                 name2count[name] += count
         return {name: name2sum[name] / name2count[name] for name in name2sum}
@@ -71,7 +72,7 @@ class HumanOutputFormat(KVWriter, SeqWriter):
     def writekvs(self, kvs):
         # Create strings for printing
         key2str = []
-        for (key, val) in sorted(kvs.items()):
+        for key, val in sorted(kvs.items()):
             if hasattr(val, "__float__"):
                 valstr = "%-8.3g" % val
             else:
@@ -89,7 +90,7 @@ class HumanOutputFormat(KVWriter, SeqWriter):
         # Write out the data
         dashes = "-" * (keywidth + valwidth + 7)
         lines = [dashes]
-        for (key, val) in sorted(key2str, key=lambda kv: kv[0].lower()):
+        for key, val in sorted(key2str, key=lambda kv: kv[0].lower()):
             lines.append(
                 "| %s%s | %s%s |"
                 % (key, " " * (keywidth - len(key)), val, " " * (valwidth - len(val)))
@@ -106,7 +107,7 @@ class HumanOutputFormat(KVWriter, SeqWriter):
 
     def writeseq(self, seq):
         seq = list(seq)
-        for (i, elem) in enumerate(seq):
+        for i, elem in enumerate(seq):
             self.file.write(elem)
             if i < len(seq) - 1:  # add space unless this is the last one
                 self.file.write(" ")
@@ -148,7 +149,7 @@ class CSVOutputFormat(KVWriter):
             self.file.seek(0)
             lines = self.file.readlines()
             self.file.seek(0)
-            for (i, k) in enumerate(self.keys):
+            for i, k in enumerate(self.keys):
                 if i > 0:
                     self.file.write(",")
                 self.file.write(k)
@@ -157,7 +158,7 @@ class CSVOutputFormat(KVWriter):
                 self.file.write(line[:-1])
                 self.file.write(self.sep * len(extra_keys))
                 self.file.write("\n")
-        for (i, k) in enumerate(self.keys):
+        for i, k in enumerate(self.keys):
             if i > 0:
                 self.file.write(",")
             v = kvs.get(k)
@@ -255,7 +256,7 @@ def logkvs(d):
     """
     Log a dictionary of key-value pairs
     """
-    for (k, v) in d.items():
+    for k, v in d.items():
         logkv(k, v)
 
 
@@ -263,7 +264,7 @@ def logkvs_mean(d):
     """
     Log a dictionary of key-value pairs with averaging over multiple calls
     """
-    for (k, v) in d.items():
+    for k, v in d.items():
         logkv_mean(k, v)
 
 
@@ -601,9 +602,9 @@ def read_tb(path):
     data = np.empty((maxstep, len(tag2pairs)))
     data[:] = np.nan
     tags = sorted(tag2pairs.keys())
-    for (colidx, tag) in enumerate(tags):
+    for colidx, tag in enumerate(tags):
         pairs = tag2pairs[tag]
-        for (step, value) in pairs:
+        for step, value in pairs:
             data[step - 1, colidx] = value
     return pandas.DataFrame(data, columns=tags)
 

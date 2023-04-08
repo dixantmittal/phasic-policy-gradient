@@ -1,11 +1,12 @@
 import os
-import time
 import resource
+import time
 
 import numpy as np
 import torch as th
-from . import logger
 from mpi4py import MPI
+
+from . import logger
 
 
 def rcm(start, stop, modulus, mode="[)"):
@@ -24,6 +25,7 @@ def rcm(start, stop, modulus, mode="[)"):
     return (start < stop) and (
         (left_hit and mode[0] == "[") or (middle_hit) or (right_hit and mode[1] == "]")
     )
+
 
 class LogSaveHelper:
     def __init__(
